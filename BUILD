@@ -219,10 +219,10 @@ cc_library(
         "-D_GNU_SOURCE",
         "-DNO_FRAME_POINTER",
         "-fno-common",
+        "-Iexternal/zlib",
         "-Wno-cpp",
     ],
     includes = [
-        "external/zlib",
         "include",
         "include/tdep",
         "include/tdep-x86_64",
