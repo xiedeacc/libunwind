@@ -1,5 +1,5 @@
 bazel-bin
-bazel-libunwind-1.70
+bazel-libunwind
 bazel-out
 bazel-testlogs
 bazel-*
