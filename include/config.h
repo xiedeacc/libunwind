@@ -5,7 +5,7 @@
 #define CONFIG_BLOCK_SIGNALS /**/
 
 /* Enable Debug Frame */
-/* #undef CONFIG_DEBUG_FRAME */
+#define CONFIG_DEBUG_FRAME 1
 
 /* Support for Microsoft ABI extensions */
 /* #undef CONFIG_MSABI_SUPPORT */
@@ -69,7 +69,7 @@
 #define HAVE_DECL_PT_GETREGS 1
 
 /* Define to 1 if you have the declaration of `PT_IO', and to 0 if you don't.
-   */
+ */
 #define HAVE_DECL_PT_IO 0
 
 /* Define to 1 if you have the declaration of `PT_STEP', and to 0 if you
@@ -124,7 +124,7 @@
 #define HAVE_LINK_H 1
 
 /* Define if you have liblzma */
-/* #undef HAVE_LZMA */
+#define HAVE_LZMA 1
 
 /* Define to 1 if you have the <memory.h> header file. */
 #define HAVE_MEMORY_H 1
@@ -202,7 +202,7 @@
 #define HAVE_UNISTD_H 1
 
 /* Define if you have libz */
-/* #undef HAVE_ZLIB */
+#define HAVE_ZLIB 1
 
 /* Defined if __builtin_unreachable() is available */
 #define HAVE__BUILTIN_UNREACHABLE 1

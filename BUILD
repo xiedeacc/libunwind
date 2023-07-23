@@ -222,6 +222,7 @@ cc_library(
         "-Wno-cpp",
     ],
     includes = [
+        "external/zlib",
         "include",
         "include/tdep",
         "include/tdep-x86_64",
@@ -230,5 +231,6 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":elf64",
+        "@zlib",
     ],
 )
