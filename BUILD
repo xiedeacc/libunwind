@@ -15,6 +15,11 @@ cc_library(
 cc_library(
     name = "unwind-coredump",
     srcs = [
+        "include/compiler.h",
+        "include/config.h",
+        "include/mempool.h",
+        "include/libunwind_i.h",
+        "include/dwarf.h",
     ] + glob(
         [
             "src/coredump/**/*.c",
@@ -26,16 +31,11 @@ cc_library(
         ],
     ),
     hdrs = [
-        "include/compiler.h",
-        "include/config.h",
-        "include/dwarf.h",
-        "include/libunwind-coredump.h",
-        "include/libunwind_i.h",
         "include/libunwind-x86_64.h",
+        "include/libunwind-coredump.h",
         "include/libunwind-common.h",
         "include/libunwind-dynamic.h",
         "include/libunwind.h",
-        "include/mempool.h",
     ] + glob(
         [
             "include/tdep-x86_64/*.h",
@@ -66,6 +66,11 @@ cc_library(
 cc_library(
     name = "unwind-ptrace",
     srcs = [
+        "include/compiler.h",
+        "include/libunwind_i.h",
+        "include/mempool.h",
+        "include/config.h",
+        "include/dwarf.h",
     ] + glob(
         [
             "src/ptrace/**/*.c",
@@ -75,16 +80,11 @@ cc_library(
         ],
     ),
     hdrs = [
-        "include/compiler.h",
-        "include/config.h",
-        "include/dwarf.h",
         "include/libunwind-ptrace.h",
         "include/libunwind.h",
         "include/libunwind-common.h",
         "include/libunwind-x86_64.h",
         "include/libunwind-dynamic.h",
-        "include/libunwind_i.h",
-        "include/mempool.h",
     ] + glob(
         [
             "include/tdep-x86_64/*.h",
@@ -115,6 +115,11 @@ cc_library(
 cc_library(
     name = "unwind-setjmp",
     srcs = [
+        "include/compiler.h",
+        "include/config.h",
+        "include/dwarf.h",
+        "include/mempool.h",
+        "include/libunwind_i.h",
     ] + glob(
         [
             "src/setjmp/**/*.c",
@@ -124,15 +129,10 @@ cc_library(
         ],
     ),
     hdrs = [
-        "include/compiler.h",
-        "include/config.h",
-        "include/dwarf.h",
         "include/libunwind.h",
         "include/libunwind-common.h",
-        "include/libunwind_i.h",
         "include/libunwind-x86_64.h",
         "include/libunwind-dynamic.h",
-        "include/mempool.h",
     ] + glob(
         [
             "include/tdep-x86_64/*.h",
@@ -168,6 +168,14 @@ cc_library(
         "src/os-linux.c",
         "src/x86_64/siglongjmp.S",
         "src/x86_64/setcontext.S",
+        "include/compiler.h",
+        "include/config.h",
+        "include/dwarf-eh.h",
+        "include/mempool.h",
+        "include/remote.h",
+        "include/dwarf.h",
+        "include/dwarf_i.h",
+        "include/libunwind_i.h",
         "src/x86_64/longjmp.S",
         "src/x86_64/getcontext.S",
     ] + glob(
@@ -188,18 +196,10 @@ cc_library(
         ],
     ),
     hdrs = [
-        "include/compiler.h",
-        "include/config.h",
-        "include/dwarf-eh.h",
-        "include/dwarf.h",
-        "include/dwarf_i.h",
-        "include/libunwind_i.h",
         "include/libunwind.h",
         "include/libunwind-x86_64.h",
         "include/libunwind-common.h",
         "include/libunwind-dynamic.h",
-        "include/mempool.h",
-        "include/remote.h",
         "include/unwind.h",
     ] + glob(
         [
