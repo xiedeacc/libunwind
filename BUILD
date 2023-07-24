@@ -174,6 +174,8 @@ cc_library(
         [
             "src/unwind/**/*.c",
             "src/unwind/**/*.h",
+            "src/ptrace/**/*.c",
+            "src/ptrace/*.h",
             "src/mi/**/*.c",
             "src/dwarf/**/*.c",
             "src/x86_64/**/*.c",
@@ -231,6 +233,10 @@ cc_library(
     visibility = ["//visibility:public"],
     deps = [
         ":elf64",
+        ":unwind-coredump",
+        ":unwind-ptrace",
+        ":unwind-setjmp",
         "@zlib",
     ],
+    alwayslink = True,
 )
