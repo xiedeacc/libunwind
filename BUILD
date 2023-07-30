@@ -45,9 +45,6 @@ cc_library(
         ],
     ),
     copts = [
-        "-DHAVE_CONFIG_H",
-        "-D_GNU_SOURCE",
-        "-DNO_FRAME_POINTER",
         "-fno-common",
         "-Wno-cpp",
     ],
@@ -56,6 +53,11 @@ cc_library(
         "include/tdep",
         "include/tdep-x86_64",
         "src",
+    ],
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NO_FRAME_POINTER",
     ],
     visibility = ["//visibility:public"],
     deps = [
@@ -94,9 +96,6 @@ cc_library(
         ],
     ),
     copts = [
-        "-DHAVE_CONFIG_H",
-        "-D_GNU_SOURCE",
-        "-DNO_FRAME_POINTER",
         "-fno-common",
         "-Wno-cpp",
     ],
@@ -105,6 +104,11 @@ cc_library(
         "include/tdep",
         "include/tdep-x86_64",
         "src",
+    ],
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NO_FRAME_POINTER",
     ],
     visibility = ["//visibility:public"],
     deps = [
@@ -142,9 +146,6 @@ cc_library(
         ],
     ),
     copts = [
-        "-DHAVE_CONFIG_H",
-        "-D_GNU_SOURCE",
-        "-DNO_FRAME_POINTER",
         "-fno-common",
         "-Wno-cpp",
     ],
@@ -153,6 +154,11 @@ cc_library(
         "include/tdep",
         "include/tdep-x86_64",
         "src",
+    ],
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NO_FRAME_POINTER",
     ],
     visibility = ["//visibility:public"],
     deps = [
@@ -217,9 +223,6 @@ cc_library(
         ],
     ),
     copts = [
-        "-DHAVE_CONFIG_H",
-        "-D_GNU_SOURCE",
-        "-DNO_FRAME_POINTER",
         "-fno-common",
         "-Iexternal/zlib",
         "-Wno-cpp",
@@ -231,6 +234,11 @@ cc_library(
         "src",
         "src/dwarf",
         "src/mi",
+    ],
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NO_FRAME_POINTER",
     ],
     visibility = ["//visibility:public"],
     deps = [
