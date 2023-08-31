@@ -164,19 +164,19 @@ http_archive(
 
 http_archive(
     name = "lzma",
-    sha256 = "a5f59d0bd6bd0c0dc38bfd7fb4f1463358a562a812f1735d2bc9425f8169d0a7",
-    strip_prefix = "xz-6814fd3df040e5fb985a8d8b6b89c5fd5e53f9f7",
+    sha256 = "e684e1c3652f5ce760930d5073ae867243578d6ad056aef4072d6d02316b9f6a",
+    strip_prefix = "xz-515d98d55120baca0ebd55563a993ba5b102b38b",
     urls = [
-        "https://github.com/xiedeacc/xz/archive/6814fd3df040e5fb985a8d8b6b89c5fd5e53f9f7.tar.gz",
+        "https://github.com/xiedeacc/xz/archive/515d98d55120baca0ebd55563a993ba5b102b38b.tar.gz",
     ],
 )
 
 http_archive(
     name = "zlib",
-    sha256 = "46e7ef872204839e74ffed8cf9004b296a80caba756e21ac546881c727af4e5f",
-    strip_prefix = "zlib-50c820653b6f0c93e4d9da3141f946a98a113fd0",
+    sha256 = "6fbf43f4658bc6048f3f4beca2f7cf7cbfc9ad1380335208875866d279b41528",
+    strip_prefix = "zlib-ff644470d69a58407f49eaaa6236faef6786000a",
     urls = [
-        "https://github.com/xiedeacc/zlib/archive/50c820653b6f0c93e4d9da3141f946a98a113fd0.tar.gz",
+        "https://github.com/xiedeacc/zlib/archive/ff644470d69a58407f49eaaa6236faef6786000a.tar.gz",
     ],
 )
 

@@ -5,7 +5,7 @@
 #define CONFIG_BLOCK_SIGNALS /**/
 
 /* Enable Debug Frame */
-#define CONFIG_DEBUG_FRAME 1
+#define CONFIG_DEBUG_FRAME /**/
 
 /* Support for Microsoft ABI extensions */
 /* #undef CONFIG_MSABI_SUPPORT */
@@ -69,7 +69,7 @@
 #define HAVE_DECL_PT_GETREGS 1
 
 /* Define to 1 if you have the declaration of `PT_IO', and to 0 if you don't.
- */
+   */
 #define HAVE_DECL_PT_IO 0
 
 /* Define to 1 if you have the declaration of `PT_STEP', and to 0 if you
