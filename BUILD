@@ -1,21 +1,43 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+package(default_visibility = ["//visibility:public"])
+
+# NOTICE: header sequence refer XXX.Plo
+
+COPTS = [
+    "-march=native",
+    "-g",
+    "-O2",
+    "-fexceptions",
+    "-Wall",
+    "-Wsign-compare",
+]
+
 cc_library(
-    name = "elf64",
+    name = "unwind-elf64",
     srcs = [
-        "include/compiler.h",
-        "include/config.h",
         "src/elf64.c",
+    ],
+    # buildifier: leave-alone
+    hdrs = [
         "src/elf64.h",
         "src/elfxx.h",
-        "include/libunwind_i.h",
-        "include/mempool.h",
-        "include/dwarf.h",
-    ] + glob([
-        "include/tdep-x86_64/*.h",
-        "include/tdep/*.h",
-    ]),
-    hdrs = [
         "src/elfxx.c",
+        "include/mempool.h",
+        "include/libunwind_i.h",
+        "include/config.h",
+        "include/compiler.h",
+        "include/libunwind.h",
+        "include/libunwind-x86_64.h",
+        "include/libunwind-dynamic.h",
+        "include/libunwind-common.h",
+        "include/tdep/libunwind_i.h",
+        "include/tdep-x86_64/libunwind_i.h",
+        "include/dwarf.h",
+        "include/tdep-x86_64/dwarf-config.h",
     ],
+    # buildifier: leave-alone
+    copts = COPTS + [],
     includes = [
         "include",
         "include/tdep-x86_64",
@@ -29,13 +51,95 @@ cc_library(
     ],
     deps = [
         "@lzma",
+        "@zlib",
+    ],
+)
+
+cc_library(
+    name = "unwind-dwarf-common",
+    srcs = [
+        "src/dwarf/global.c",
+    ] + glob([
+    ]),
+    hdrs = [
+        "include/dwarf_i.h",
+    ],
+    copts = COPTS + [],
+    # buildifier: leave-alone
+    includes = [
+        "include",
+        "include/tdep-x86_64",
+        "src",
+    ],
+    # buildifier: leave-alone
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NDEBUG",
+        "__EXTENSIONS__",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":unwind-elf64",
+    ],
+)
+
+cc_library(
+    name = "unwind-ptrace",
+    srcs = [
+        "src/ptrace/_UPT_access_fpreg.c",
+        "src/ptrace/_UPT_access_mem.c",
+        "src/ptrace/_UPT_access_reg.c",
+        "src/ptrace/_UPT_accessors.c",
+        "src/ptrace/_UPT_create.c",
+        "src/ptrace/_UPT_destroy.c",
+        "src/ptrace/_UPT_elf.c",
+        "src/ptrace/_UPT_find_proc_info.c",
+        "src/ptrace/_UPT_get_dyn_info_list_addr.c",
+        "src/ptrace/_UPT_get_proc_name.c",
+        "src/ptrace/_UPT_internal.h",
+        "src/ptrace/_UPT_put_unwind_info.c",
+        "src/ptrace/_UPT_reg_offset.c",
+        "src/ptrace/_UPT_resume.c",
+    ],
+    # buildifier: leave-alone
+    hdrs = [
+        "include/config.h",
+        "include/libunwind-ptrace.h",
+        "include/libunwind.h",
+        "include/libunwind-x86_64.h",
+        "include/libunwind-dynamic.h",
+        "include/libunwind-common.h",
+        "include/libunwind_i.h",
+        "include/compiler.h",
+        "include/tdep/libunwind_i.h",
+        "include/tdep-x86_64/libunwind_i.h",
+        "include/mempool.h",
+        "include/dwarf.h",
+        "include/tdep-x86_64/dwarf-config.h",
+    ],
+    # buildifier: leave-alone
+    copts = COPTS + [],
+    includes = [
+        "include",
+        "include/tdep-x86_64",
+        "src",
+    ],
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NDEBUG",
+        "__EXTENSIONS__",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":unwind-elf64",
     ],
 )
 
 cc_library(
     name = "unwind-coredump",
     srcs = [
-        "include/config.h",
         "src/coredump/_UCD_access_mem.c",
         "src/coredump/_UCD_access_reg_linux.c",
         "src/coredump/_UCD_accessors.c",
@@ -56,225 +160,24 @@ cc_library(
         "src/coredump/_UPT_resume.c",
         "src/coredump/ucd_file_table.c",
         "src/coredump/ucd_file_table.h",
-    ] + glob([
-        "include/tdep-x86_64/*.h",
-        "include/tdep/*.h",
-    ]),
+    ],
+    # buildifier: leave-alone
     hdrs = [
-        "include/libunwind.h",
-        "include/libunwind-common.h",
+        "include/config.h",
         "include/libunwind-coredump.h",
+        "include/libunwind.h",
+        "include/libunwind-x86_64.h",
         "include/libunwind-dynamic.h",
-    ],
-    copts = [
-        "-fPIC",
-        "-fexceptions",
-        "-Wall",
-        "-Wsign-compare",
-        "-Wno-cpp",
-    ],
-    includes = [
-        "include",
-        "include/tdep-x86_64",
-        "src",
-    ],
-    local_defines = [
-        "HAVE_CONFIG_H",
-        "_GNU_SOURCE",
-        "NDEBUG",
-        "__EXTENSIONS__",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":elf64",
-    ],
-)
-
-cc_library(
-    name = "unwind-dwarf-common",
-    srcs = [
-        "include/dwarf_i.h",
-        "include/dwarf.h",
+        "include/libunwind-common.h",
         "include/libunwind_i.h",
-        "include/config.h",
-        "src/dwarf/global.c",
-    ] + glob([
-        "include/tdep-x86_64/*.h",
-        "include/tdep/*.h",
-    ]),
-    hdrs = [
-        "include/libunwind.h",
-        "include/libunwind-common.h",
-        "include/libunwind-dynamic.h",
-        "include/libunwind-x86_64.h",
-    ],
-    copts = [
-        "-fPIC",
-        "-fexceptions",
-        "-Wall",
-        "-Wsign-compare",
-        "-Wno-cpp",
-    ],
-    includes = [
-        "include",
-        "include/tdep-x86_64",
-        "src",
-    ],
-    local_defines = [
-        "HAVE_CONFIG_H",
-        "_GNU_SOURCE",
-        "NDEBUG",
-        "__EXTENSIONS__",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":elf64",
-    ],
-)
-
-cc_library(
-    name = "unwind-dwarf-generic",
-    srcs = [
-        "include/dwarf-eh.h",
-        "include/dwarf_i.h",
+        "include/compiler.h",
+        "include/tdep/libunwind_i.h",
+        "include/tdep-x86_64/libunwind_i.h",
+        "include/mempool.h",
         "include/dwarf.h",
-        "include/libunwind_i.h",
-        "include/config.h",
-        "src/dwarf/Gexpr.c",
-        "src/dwarf/Gfde.c",
-        "src/dwarf/Gfind_unwind_table.c",
-        "src/dwarf/Gfind_proc_info-lsb.c",
-        "src/dwarf/Gparser.c",
-        "src/dwarf/Gpe.c",
-        "src/os-linux.h",
-    ] + glob([
-        "include/tdep-x86_64/*.h",
-        "include/tdep/*.h",
-    ]),
-    hdrs = [
-        "include/libunwind.h",
-        "include/libunwind-common.h",
-        "include/libunwind-dynamic.h",
-        "include/libunwind-x86_64.h",
+        "include/tdep-x86_64/dwarf-config.h",
     ],
-    copts = [
-        "-fPIC",
-        "-fexceptions",
-        "-Wall",
-        "-Wsign-compare",
-        "-Wno-cpp",
-    ],
-    includes = [
-        "external/zlib",
-        "include",
-        "include/tdep-x86_64",
-        "src",
-    ],
-    local_defines = [
-        "HAVE_CONFIG_H",
-        "_GNU_SOURCE",
-        "NDEBUG",
-        "__EXTENSIONS__",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":elf64",
-        ":unwind-dwarf-common",
-        "@zlib",
-    ],
-)
-
-cc_library(
-    name = "unwind-dwarf-local",
-    srcs = [
-        "include/dwarf-eh.h",
-        "include/config.h",
-        "src/dwarf/Lexpr.c",
-        "src/dwarf/Lfde.c",
-        "src/dwarf/Lfind_unwind_table.c",
-        "src/dwarf/Lfind_proc_info-lsb.c",
-        "src/dwarf/Lparser.c",
-        "src/dwarf/Lpe.c",
-        "src/os-linux.h",
-    ] + glob([
-        "include/tdep-x86_64/*.h",
-        "include/tdep/*.h",
-    ]),
-    hdrs = [
-        "include/libunwind.h",
-        "include/libunwind-common.h",
-        "include/libunwind-dynamic.h",
-        "include/libunwind-x86_64.h",
-        "src/dwarf/Gexpr.c",
-        "src/dwarf/Gfde.c",
-        "src/dwarf/Gfind_proc_info-lsb.c",
-        "src/dwarf/Gfind_unwind_table.c",
-        "src/dwarf/Gparser.c",
-        "src/dwarf/Gpe.c",
-    ],
-    copts = [
-        "-fPIC",
-        "-fexceptions",
-        "-Wall",
-        "-Wsign-compare",
-        "-Wno-cpp",
-    ],
-    includes = [
-        "external/zlib",
-        "include",
-        "include/tdep-x86_64",
-        "src",
-    ],
-    local_defines = [
-        "HAVE_CONFIG_H",
-        "_GNU_SOURCE",
-        "NDEBUG",
-        "__EXTENSIONS__",
-    ],
-    visibility = ["//visibility:public"],
-    deps = [
-        ":elf64",
-        ":unwind-dwarf-common",
-        "@zlib",
-    ],
-)
-
-cc_library(
-    name = "unwind-ptrace",
-    srcs = [
-        "include/config.h",
-        "src/ptrace/_UPT_elf.c",
-        "src/ptrace/_UPT_accessors.c",
-        "src/ptrace/_UPT_access_fpreg.c",
-        "src/ptrace/_UPT_access_mem.c",
-        "src/ptrace/_UPT_access_reg.c",
-        "src/ptrace/_UPT_create.c",
-        "src/ptrace/_UPT_destroy.c",
-        "src/ptrace/_UPT_find_proc_info.c",
-        "src/ptrace/_UPT_get_dyn_info_list_addr.c",
-        "src/ptrace/_UPT_put_unwind_info.c",
-        "src/ptrace/_UPT_get_proc_name.c",
-        "src/ptrace/_UPT_reg_offset.c",
-        "src/ptrace/_UPT_resume.c",
-        "src/ptrace/_UPT_internal.h",
-    ] + glob([
-        "include/tdep-x86_64/*.h",
-        "include/tdep/*.h",
-    ]),
-    hdrs = [
-        "include/libunwind.h",
-        "include/libunwind-common.h",
-        "include/libunwind-dynamic.h",
-        "include/libunwind-ptrace.h",
-        "include/libunwind-x86_64.h",
-    ],
-    copts = [
-        "-fPIC",
-        "-fexceptions",
-        "-Wall",
-        "-Wsign-compare",
-        "-Wno-cpp",
-    ],
+    # buildifier: leave-alone
     includes = [
         "include",
         "include/tdep-x86_64",
@@ -288,34 +191,37 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        ":elf64",
+        ":unwind-elf64",
     ],
 )
 
 cc_library(
     name = "unwind-setjmp",
     srcs = [
-        "include/config.h",
         "src/setjmp/longjmp.c",
-        "src/setjmp/siglongjmp.c",
         "src/setjmp/setjmp_i.h",
+        "src/setjmp/siglongjmp.c",
     ] + glob([
         "include/tdep-x86_64/*.h",
         "include/tdep/*.h",
     ]),
+    # buildifier: leave-alone
     hdrs = [
+        "include/config.h",
         "include/libunwind.h",
-        "include/libunwind-common.h",
-        "include/libunwind-dynamic.h",
         "include/libunwind-x86_64.h",
+        "include/libunwind-dynamic.h",
+        "include/libunwind-common.h",
+        "include/libunwind_i.h",
+        "include/compiler.h",
+        "include/tdep/libunwind_i.h",
+        "include/tdep-x86_64/libunwind_i.h",
+        "include/mempool.h",
+        "include/dwarf.h",
+        "include/tdep-x86_64/dwarf-config.h",
     ],
-    copts = [
-        "-fPIC",
-        "-fexceptions",
-        "-Wall",
-        "-Wsign-compare",
-        "-Wno-cpp",
-    ],
+    # buildifier: leave-alone
+    copts = COPTS + [],
     includes = [
         "include",
         "include/tdep-x86_64",
@@ -329,76 +235,95 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        ":elf64",
+        ":unwind-elf64",
     ],
 )
 
 cc_library(
-    name = "unwind-x86_64",
+    name = "unwind-dwarf-generic",
     srcs = [
-        "src/dl-iterate-phdr.c",
-        "src/mi/Gdestroy_addr_space.c",
-        "src/mi/Gdyn-extract.c",
-        "src/mi/Gdyn-remote.c",
-        "src/mi/Gfind_dynamic_proc_info.c",
-        "src/mi/Gget_accessors.c",
-        "src/mi/Gget_fpreg.c",
-        "src/mi/Gget_proc_info_by_ip.c",
-        "src/mi/Gget_proc_info_in_range.c",
-        "src/mi/Gget_proc_name.c",
-        "src/mi/Gget_reg.c",
-        "src/mi/Gput_dynamic_unwind_info.c",
-        "src/mi/Gset_cache_size.c",
-        "src/mi/Gset_caching_policy.c",
-        "src/mi/Gset_fpreg.c",
-        "src/mi/Gset_reg.c",
-        "src/mi/flush_cache.c",
-        "src/mi/init.c",
-        "src/mi/mempool.c",
-        "src/mi/strerror.c",
-        "src/os-linux.c",
-        "src/x86_64/Gapply_reg_state.c",
-        "src/x86_64/Gcreate_addr_space.c",
-        "src/x86_64/Gget_proc_info.c",
-        "src/x86_64/Gget_save_loc.c",
-        "src/x86_64/Gglobal.c",
-        "src/x86_64/Ginit.c",
-        "src/x86_64/Ginit_local.c",
-        "src/x86_64/Ginit_remote.c",
-        "src/x86_64/Gos-linux.c",
-        "src/x86_64/Greg_states_iterate.c",
-        "src/x86_64/Gregs.c",
-        "src/x86_64/Gresume.c",
-        "src/x86_64/Gstash_frame.c",
-        "src/x86_64/Gstep.c",
-        "src/x86_64/Gtrace.c",
-        "src/x86_64/is_fpreg.c",
-        "src/x86_64/regname.c",
-        "src/x86_64/unwind_i.h",
-        "src/x86_64/ucontext_i.h",
-        "src/x86_64/offsets.h",
-        "src/x86_64/init.h",
-        "include/remote.h",
+        "src/dwarf/Gexpr.c",
+        "src/dwarf/Gfde.c",
+        "src/dwarf/Gfind_proc_info-lsb.c",
+        "src/dwarf/Gfind_unwind_table.c",
+        "src/dwarf/Gparser.c",
+        "src/dwarf/Gpe.c",
         "src/os-linux.h",
+    ],
+    # buildifier: leave-alone
+    hdrs = [
+        "include/libunwind_i.h",
+        "include/mempool.h",
+        "include/dwarf.h",
         "include/dwarf_i.h",
         "include/dwarf-eh.h",
-    ] + glob([
-        "include/tdep-x86_64/*.h",
-        "include/tdep/*.h",
-    ]),
-    hdrs = [
         "include/libunwind.h",
-        "include/libunwind-common.h",
-        "include/libunwind-dynamic.h",
         "include/libunwind-x86_64.h",
+        "include/libunwind-dynamic.h",
+        "include/libunwind-common.h",
+        "include/tdep-x86_64/dwarf-config.h",
+        "include/config.h",
+        "include/compiler.h",
+        "include/tdep/libunwind_i.h",
+        "include/tdep-x86_64/libunwind_i.h",
     ],
-    copts = [
-        "-fPIC",
-        "-fexceptions",
-        "-Wall",
-        "-Wsign-compare",
-        "-Wno-cpp",
+    # buildifier: leave-alone
+    copts = COPTS + [],
+    includes = [
+        "external/zlib",
+        "include",
+        "include/tdep-x86_64",
+        "src",
     ],
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NDEBUG",
+        "__EXTENSIONS__",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":unwind-dwarf-common",
+        ":unwind-elf64",
+    ],
+)
+
+cc_library(
+    name = "unwind-dwarf-local",
+    srcs = [
+        "src/dwarf/Lexpr.c",
+        "src/dwarf/Lfde.c",
+        "src/dwarf/Lfind_proc_info-lsb.c",
+        "src/dwarf/Lfind_unwind_table.c",
+        "src/dwarf/Lparser.c",
+        "src/dwarf/Lpe.c",
+        "src/os-linux.h",
+    ],
+    # buildifier: leave-alone
+    hdrs = [
+        "src/dwarf/Gexpr.c",
+        "src/dwarf/Gfde.c",
+        "src/dwarf/Gfind_proc_info-lsb.c",
+        "src/dwarf/Gfind_unwind_table.c",
+        "src/dwarf/Gparser.c",
+        "src/dwarf/Gpe.c",
+        "include/libunwind_i.h",
+        "include/mempool.h",
+        "include/dwarf.h",
+        "include/dwarf_i.h",
+        "include/dwarf-eh.h",
+        "include/libunwind.h",
+        "include/libunwind-x86_64.h",
+        "include/libunwind-dynamic.h",
+        "include/libunwind-common.h",
+        "include/tdep-x86_64/dwarf-config.h",
+        "include/config.h",
+        "include/compiler.h",
+        "include/tdep/libunwind_i.h",
+        "include/tdep-x86_64/libunwind_i.h",
+    ],
+    # buildifier: leave-alone
+    copts = COPTS + [],
     includes = [
         "include",
         "include/tdep-x86_64",
@@ -412,15 +337,40 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        ":elf64",
+        ":unwind-dwarf-common",
+        ":unwind-elf64",
     ],
-    alwayslink = True,
+)
+
+cc_library(
+    name = "context",
+    srcs = [
+        "src/x86_64/getcontext.S",
+        "src/x86_64/longjmp.S",
+        "src/x86_64/setcontext.S",
+        "src/x86_64/siglongjmp.S",
+    ],
+    hdrs = [
+        "src/x86_64/ucontext_i.h",
+    ],
+    copts = COPTS + [],
+    includes = [
+        "include",
+        "include/tdep-x86_64",
+        "src/x86_64",
+    ],
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NDEBUG",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [],
 )
 
 cc_library(
     name = "unwind",
     srcs = [
-        "include/remote.h",
         "src/dl-iterate-phdr.c",
         "src/mi/Ldestroy_addr_space.c",
         "src/mi/Ldyn-extract.c",
@@ -460,18 +410,15 @@ cc_library(
         "src/x86_64/Lstash_frame.c",
         "src/x86_64/Lstep.c",
         "src/x86_64/Ltrace.c",
-        "src/x86_64/getcontext.S",
         "src/x86_64/init.h",
         "src/x86_64/is_fpreg.c",
-        "src/x86_64/longjmp.S",
         "src/x86_64/offsets.h",
         "src/x86_64/regname.c",
-        "src/x86_64/setcontext.S",
-        "src/x86_64/siglongjmp.S",
-        "src/x86_64/ucontext_i.h",
         "src/x86_64/unwind_i.h",
     ],
+    # buildifier: leave-alone
     hdrs = [
+        "include/remote.h",
         "include/libunwind.h",
         "include/libunwind-common.h",
         "include/libunwind-dynamic.h",
@@ -506,13 +453,8 @@ cc_library(
         "src/x86_64/Gstep.c",
         "src/x86_64/Gtrace.c",
     ],
-    copts = [
-        "-fPIC",
-        "-fexceptions",
-        "-Wall",
-        "-Wsign-compare",
-        "-Wno-cpp",
-    ],
+    # buildifier: leave-alone
+    copts = COPTS + [],
     includes = [
         "include",
         "include/tdep-x86_64",
@@ -528,8 +470,90 @@ cc_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        ":elf64",
+        ":context",
         ":unwind-dwarf-local",
+        ":unwind-elf64",
     ],
-    alwayslink = True,
+)
+
+cc_library(
+    name = "unwind-x86_64",
+    srcs = [
+        "src/dl-iterate-phdr.c",
+        "src/mi/Gdestroy_addr_space.c",
+        "src/mi/Gdyn-extract.c",
+        "src/mi/Gdyn-remote.c",
+        "src/mi/Gfind_dynamic_proc_info.c",
+        "src/mi/Gget_accessors.c",
+        "src/mi/Gget_fpreg.c",
+        "src/mi/Gget_proc_info_by_ip.c",
+        "src/mi/Gget_proc_info_in_range.c",
+        "src/mi/Gget_proc_name.c",
+        "src/mi/Gget_reg.c",
+        "src/mi/Gput_dynamic_unwind_info.c",
+        "src/mi/Gset_cache_size.c",
+        "src/mi/Gset_caching_policy.c",
+        "src/mi/Gset_fpreg.c",
+        "src/mi/Gset_reg.c",
+        "src/mi/flush_cache.c",
+        "src/mi/init.c",
+        "src/mi/mempool.c",
+        "src/mi/strerror.c",
+        "src/os-linux.c",
+        "src/os-linux.h",
+        "src/x86_64/Gapply_reg_state.c",
+        "src/x86_64/Gcreate_addr_space.c",
+        "src/x86_64/Gget_proc_info.c",
+        "src/x86_64/Gget_save_loc.c",
+        "src/x86_64/Gglobal.c",
+        "src/x86_64/Ginit.c",
+        "src/x86_64/Ginit_local.c",
+        "src/x86_64/Ginit_remote.c",
+        "src/x86_64/Gos-linux.c",
+        "src/x86_64/Greg_states_iterate.c",
+        "src/x86_64/Gregs.c",
+        "src/x86_64/Gresume.c",
+        "src/x86_64/Gstash_frame.c",
+        "src/x86_64/Gstep.c",
+        "src/x86_64/Gtrace.c",
+        "src/x86_64/init.h",
+        "src/x86_64/is_fpreg.c",
+        "src/x86_64/offsets.h",
+        "src/x86_64/regname.c",
+        "src/x86_64/unwind_i.h",
+    ],
+    # buildifier: leave-alone
+    hdrs = [
+        "include/libunwind.h",
+        "include/remote.h",
+        "include/dwarf_i.h",
+        "include/dwarf-eh.h",
+        "include/libunwind-common.h",
+        "include/libunwind-dynamic.h",
+        "include/libunwind-x86_64.h",
+    ],
+    # buildifier: leave-alone
+    copts = [
+        "-fPIC",
+        "-fexceptions",
+        "-Wall",
+        "-Wsign-compare",
+        "-Wno-cpp",
+    ],
+    includes = [
+        "include",
+        "include/tdep-x86_64",
+        "src",
+    ],
+    local_defines = [
+        "HAVE_CONFIG_H",
+        "_GNU_SOURCE",
+        "NDEBUG",
+        "__EXTENSIONS__",
+    ],
+    visibility = ["//visibility:public"],
+    deps = [
+        ":unwind",
+        ":unwind-dwarf-generic",
+    ],
 )

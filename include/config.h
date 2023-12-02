@@ -5,7 +5,7 @@
 #define CONFIG_BLOCK_SIGNALS /**/
 
 /* Enable Debug Frame */
-#define CONFIG_DEBUG_FRAME /**/
+/* #undef CONFIG_DEBUG_FRAME */
 
 /* Support for Microsoft ABI extensions */
 /* #undef CONFIG_MSABI_SUPPORT */
